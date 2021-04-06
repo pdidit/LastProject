@@ -1,47 +1,69 @@
 package com.microserviceproject.services.client.controller;
 
 import com.microserviceproject.services.client.domian.Client;
-import com.microserviceproject.services.client.service.ClientService;
+import com.microserviceproject.services.client.exeception.NoClientExistExeception;
+import com.microserviceproject.services.client.repo.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RefreshScope
 @RestController
 public class ClientController {
 
     @Autowired
-    ClientService clientService;
+    private ClientRepository clientRepository;
 
-    @GetMapping(value = "/Client")
-    public List<Client> getClients() {
-        return clientService.getClients();
+    @Value("${client-service.profileVariable}")
+    private String profileVariable;
+
+    @GetMapping(value = "/pathvariabele")
+    public String getPathVariable() {
+        return profileVariable;
     }
 
-    @GetMapping(value = "/Client/{id}")
+    @GetMapping(value = "/client")
+    public List<Client> getClients() {
+        return clientRepository.findAll();
+    }
+
+    @GetMapping(value = "/client/{id}")
     public Client getClient(@PathVariable Integer id) {
-        /*
-        Client oneClient = ClientService.getClientById(id);
+        Client oneClient = clientRepository.getOne(id);
         if (oneClient != null) {
             return oneClient;
         } else {
-            throw new RuntimeException("Client doesn't exist");
-        }*/
-        return clientService.getClientById(id);
+            throw new NoClientExistExeception("Client doesn't exist");
+        }
     }
 
-    @DeleteMapping(value = "/Client/{id}")
+    @DeleteMapping(value = "/client/{id}")
     public void deleteClient(@PathVariable Integer id) {
-        clientService.deleteClient(id);
+        Client oneClient = clientRepository.getOne(id);
+        if (oneClient != null) {
+            clientRepository.deleteById(oneClient.getID());
+        } else {
+            throw new NoClientExistExeception("Client doesn't exist");
+        }
     }
 
-    @PutMapping(value = "/Client/{id}")
-    public Client updateClient(@PathVariable Integer id, @RequestBody Client Client) {
-        return clientService.updateClient(Client, id);
+    @PutMapping(value = "/client/{id}")
+    public Client updateClient(@PathVariable Integer id, @RequestBody @Validated Client client) {
+        return clientRepository.findById(id)
+                .map(oldClient -> {
+                    return clientRepository.save(oldClient);
+                })
+                .orElseGet(() -> {
+                    return clientRepository.save(client);
+                });
     }
 
-    @PostMapping(value = "/Client")
-    public Client createClient(@RequestBody Client Client) {
-        return clientService.createClient(Client);
+    @PostMapping(value = "/client")
+    public Client createClient(@RequestBody @Validated Client client) {
+        return clientRepository.saveAndFlush(client);
     }
 }

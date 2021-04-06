@@ -7,11 +7,12 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="apigateway" />
+        <module name="quote" />
+        <module name="servicediscovery" />
         <module name="client" />
         <module name="configserver" />
-        <module name="quote" />
         <module name="clientapplication" />
-        <module name="servicediscovery" />
+        <module name="Shared" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -21,10 +22,12 @@
       <module name="configserver" target="1.8" />
       <module name="quote" target="1.8" />
       <module name="servicediscovery" target="1.8" />
+      <module name="Shared" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Shared" options="-parameters" />
       <module name="apigateway" options="-parameters" />
       <module name="client" options="-parameters" />
       <module name="clientapplication" options="-parameters" />

@@ -1,3 +1,6 @@
 2021-04-03 20:13:24 jdbc[3]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "QUOTE" not found; SQL statement:
 select quote0_.id as id1_0_, quote0_.comments as comments2_0_, quote0_.customer_name as customer3_0_, quote0_.quote_date as quote_da4_0_, quote0_.total_price as total_pr5_0_, quote0_.total_tax as total_ta6_0_ from quote quote0_ [42102-200]
+2021-04-05 15:56:13 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "QUOTE" not found; SQL statement:
+select quote0_.id as id1_0_, quote0_.comments as comments2_0_, quote0_.customer_name as customer3_0_, quote0_.quote_date as quote_da4_0_, quote0_.total_price as total_pr5_0_, quote0_.total_tax as total_ta6_0_ from quote quote0_ [42102-200]
