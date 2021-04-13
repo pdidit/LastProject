@@ -1,13 +1,13 @@
 <component name="libraryTable">
-  <library name="Maven: xpp3:xpp3_min:1.1.4c">
+  <library name="Maven: io.zipkin.brave:brave-instrumentation-spring-rabbit:5.12.7">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/xpp3/xpp3_min/1.1.4c/xpp3_min-1.1.4c.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/zipkin/brave/brave-instrumentation-spring-rabbit/5.12.7/brave-instrumentation-spring-rabbit-5.12.7.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/xpp3/xpp3_min/1.1.4c/xpp3_min-1.1.4c-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/zipkin/brave/brave-instrumentation-spring-rabbit/5.12.7/brave-instrumentation-spring-rabbit-5.12.7-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/xpp3/xpp3_min/1.1.4c/xpp3_min-1.1.4c-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/zipkin/brave/brave-instrumentation-spring-rabbit/5.12.7/brave-instrumentation-spring-rabbit-5.12.7-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

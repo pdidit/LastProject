@@ -1,13 +1,13 @@
 <component name="libraryTable">
-  <library name="Maven: org.apache.httpcomponents:httpclient:4.5.13">
+  <library name="Maven: io.zipkin.brave:brave-instrumentation-httpasyncclient:5.12.7">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpclient/4.5.13/httpclient-4.5.13.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/zipkin/brave/brave-instrumentation-httpasyncclient/5.12.7/brave-instrumentation-httpasyncclient-5.12.7.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpclient/4.5.13/httpclient-4.5.13-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/zipkin/brave/brave-instrumentation-httpasyncclient/5.12.7/brave-instrumentation-httpasyncclient-5.12.7-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpclient/4.5.13/httpclient-4.5.13-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/zipkin/brave/brave-instrumentation-httpasyncclient/5.12.7/brave-instrumentation-httpasyncclient-5.12.7-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
