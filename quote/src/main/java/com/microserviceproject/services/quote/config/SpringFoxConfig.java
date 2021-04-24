@@ -10,11 +10,21 @@ import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
+/**
+ * Config file for swagger ui.
+ */
 @Configuration
 public class SpringFoxConfig {
+    /**
+     * constant variables for swagger information.
+     */
     public static final Contact CUSTOM_CONTACT = new Contact("Padraic Meehan", "www.ait.ie", "padraic.meehan@gmail.com");
     public static final ApiInfo CUSTOM_API_INFO = new ApiInfoBuilder().title("Padraic Custom Quote API")
             .description("customer quote desciption API").version("1.0").contact(CUSTOM_CONTACT).build();
+    /**
+     * Bean need to create the swagger UI
+     * @return Docker Object need to create a new Swagger UI
+     */
     @Bean
     public Docket api(){
         return new Docket(DocumentationType.SWAGGER_2)
