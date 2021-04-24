@@ -2,6 +2,7 @@ package com.microserviceproject.client.clientapplication.controller;
 
 import com.microserviceproject.client.clientapplication.exception.ExistingQuotesException;
 import com.microserviceproject.client.clientapplication.feignClient.QuoteFeignClient;
+import com.microserviceproject.services.client.domain.ContactBy;
 import com.microserviceproject.services.client.dto.DTOClient;
 import com.microserviceproject.services.quote.dto.DTOAllQuote;
 import com.microserviceproject.services.quote.dto.DTOQuote;
@@ -91,6 +92,27 @@ public class ApplicationController {
     }
 
     /**
+     * Endpoint to query first name and surname
+     * @param firstName String First name you are searching
+     * @param surname String Surname that is searching from
+     * @return List<DTOClient> List of the clients for search.
+     */
+    @GetMapping(value = "/client/search/name")
+    public List<DTOClient> searchFirstNameAndSurname(@RequestParam String firstName, @RequestParam String surname){
+        return quoteFeignClient.searchFirstNameAndSurname(firstName, surname);
+    }
+
+    /**
+     * endpoint to query to search on which contact type
+     * @param contactBy ContactBy Contact type that you are searching
+     * @return List<DTOClient List of the client with contact type
+     */
+    @GetMapping(value = "/client/search/contact")
+    public List<DTOClient> searchContactBy(@RequestParam ContactBy contactBy){
+        return quoteFeignClient.searchContactBy(contactBy);
+    }
+
+    /**
      * Return the environment Variables of the Quotes service
      * @return String Returns the Environment variables for qoute service
      */
@@ -121,7 +143,8 @@ public class ApplicationController {
             returnQuotes.add(returnQuote);
         });
 
-        return returnQuotes; }
+        return returnQuotes;
+    }
 
     /**
      * Retieves the Quote that is requested in the ID
@@ -155,19 +178,33 @@ public class ApplicationController {
     }
 
     @PutMapping(value = "/quote/{id}")
-    public ResponseEntity updateQuote(@PathVariable Integer id, @RequestBody @Valid DTOAllQuote quote) {
+    public DTOAllQuote updateQuote(@PathVariable Integer id, @RequestBody @Valid DTOAllQuote quote) {
 
         //Checks that the customer is in the system.
         DTOClient client = quoteFeignClient.getClientInfo(quote.getCustomer().getID());
         if(client == null){
             throw new RuntimeException("Client doesn't exist");
-        }
+        } else {
+            //convert to DTOQuote from DTOAllQuote
+            DTOQuote updateQuote = new DTOQuote();
+            updateQuote.setCustomerID(quote.getCustomer().getID());
+            updateQuote.setQuoteDate(quote.getQuoteDate());
+            updateQuote.setDetailsQuote(quote.getDetailsQuote());
+            updateQuote.setTotalPrice(quote.getTotalPrice());
+            updateQuote.setTotalTax(quote.getTotalTax());
+            updateQuote.setID(id);
 
-        //Give response entity with URI of update Quote.
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest().path("/{id}")
-                .buildAndExpand(client.getID()).toUri();
-        return ResponseEntity.created(location).build();
+            //update and send quote data back
+            DTOQuote savedQuote = quoteFeignClient.updateQuote(id, updateQuote);
+            DTOAllQuote returnQuote = new DTOAllQuote();
+            returnQuote.setCustomer(quoteFeignClient.getClientInfo(savedQuote.getCustomerID()));
+            returnQuote.setID(savedQuote.getID());
+            returnQuote.setQuoteDate(savedQuote.getQuoteDate());
+            returnQuote.setDetailsQuote(savedQuote.getDetailsQuote());
+            returnQuote.setTotalPrice(savedQuote.getTotalPrice());
+            returnQuote.setTotalTax(savedQuote.getTotalTax());
+            return returnQuote;
+        }
     }
 
     /**
@@ -181,21 +218,76 @@ public class ApplicationController {
         DTOClient client = quoteFeignClient.getClientInfo(quote.getCustomer().getID());
         if(client == null){
             throw new RuntimeException("Client doesn't exist");
+        } else {
+
+            //Convert to DTOQuote so it can be saved in the Quote service.
+            DTOQuote newQuote = new DTOQuote();
+            newQuote.setQuoteDate(quote.getQuoteDate());
+            newQuote.setDetailsQuote(quote.getDetailsQuote());
+            newQuote.setTotalPrice(quote.getTotalPrice());
+            newQuote.setTotalTax(quote.getTotalTax());
+            System.out.println(client.getID());
+            System.out.println(quote.getCustomer().getID());
+            newQuote.setCustomerID(client.getID());
+            DTOQuote savedQuote = quoteFeignClient.createQuote(newQuote);
+
+            //Give response entity with URI of new Quote.
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequest().path("/{id}")
+                    .buildAndExpand(savedQuote.getID()).toUri();
+            return ResponseEntity.created(location).build();
         }
+    }
 
-        //Convert to DTOQuote so it can be saved in the Quote service.
-        DTOQuote newQuote = new DTOQuote();
-        newQuote.setCustomerID(quote.getCustomer().getID());
-        newQuote.setQuoteDate(quote.getQuoteDate());
-        newQuote.setDetailsQuote(quote.getDetailsQuote());
-        newQuote.setTotalPrice(quote.getTotalPrice());
-        newQuote.setTotalTax(quote.getTotalTax());
-        DTOQuote savedQuote = quoteFeignClient.createQuote(newQuote);
+    /**
+     * End point for search by customer quotes
+     * @param id Integer ID of customer to get the customers quotes
+     * @return List<DTOAllQuote> List of the customer quotes
+     */
+    @GetMapping(value = "/quote/search/cust/")
+    public List<DTOAllQuote> searchByCustomer(@RequestParam Integer id) {
+        //create a list of DTOAllQuote
+        List<DTOAllQuote> returnQuotes = new ArrayList<>();
+        //make call for the query by customer quotes in the system.
+        quoteFeignClient.searchQuotesForCustomer(id).forEach(quote -> {
+            DTOAllQuote returnQuote = new DTOAllQuote();
+            //get the customer information from the client service.
+            returnQuote.setCustomer(quoteFeignClient.getClientInfo(quote.getCustomerID()));
+            //covert the DTOQuote into the DTOAllQuote list.
+            returnQuote.setID(quote.getID());
+            returnQuote.setQuoteDate(quote.getQuoteDate());
+            returnQuote.setDetailsQuote(quote.getDetailsQuote());
+            returnQuote.setTotalPrice(quote.getTotalPrice());
+            returnQuote.setTotalTax(quote.getTotalTax());
+            returnQuotes.add(returnQuote);
+        });
 
-        //Give response entity with URI of new Quote.
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest().path("/{id}")
-                .buildAndExpand(savedQuote.getID()).toUri();
-        return ResponseEntity.created(location).build();
+        return returnQuotes;
+    }
+
+    /**
+     * End point for search by price.
+     * @param topPrice Double Top price to be retrieved
+     * @return List<DTOAllQuote> List of the top price
+     */
+    @GetMapping(value = "/quote/search/price/")
+    public List<DTOAllQuote> searchPriceOver(@RequestParam Double topPrice) {
+        //create a list of DTOAllQuote
+        List<DTOAllQuote> returnQuotes = new ArrayList<>();
+        //make call for the query by price quotes in the system.
+        quoteFeignClient.searchPriceOver(topPrice).forEach(quote -> {
+            DTOAllQuote returnQuote = new DTOAllQuote();
+            //get the customer information from the client service.
+            returnQuote.setCustomer(quoteFeignClient.getClientInfo(quote.getCustomerID()));
+            //covert the DTOQuote into the DTOAllQuote list.
+            returnQuote.setID(quote.getID());
+            returnQuote.setQuoteDate(quote.getQuoteDate());
+            returnQuote.setDetailsQuote(quote.getDetailsQuote());
+            returnQuote.setTotalPrice(quote.getTotalPrice());
+            returnQuote.setTotalTax(quote.getTotalTax());
+            returnQuotes.add(returnQuote);
+        });
+
+        return returnQuotes;
     }
 }

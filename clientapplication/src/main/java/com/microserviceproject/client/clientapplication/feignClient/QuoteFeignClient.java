@@ -34,10 +34,10 @@ public interface QuoteFeignClient {
     DTOClient createClientInfo(@RequestBody DTOClient client);
 
     @GetMapping(value = "/quote-service/client/search/names")
-    List<DTOClient> searchFirstNameAndSuranme(@RequestParam String firstName, @RequestParam String surname);
+    List<DTOClient> searchFirstNameAndSurname(@RequestParam String firstName, @RequestParam String surname);
 
     @GetMapping(value = "/quote-service/client/search/contactby")
-    List<DTOClient> searchConactBy(@RequestParam ContactBy contactBy);
+    List<DTOClient> searchContactBy(@RequestParam ContactBy contactBy);
 
     @GetMapping(value = "/quote-service/pathvariable")
     String getPathVariable();
